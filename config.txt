@@ -1,0 +1,3 @@
+DRIVE = C:\Users\lauyo\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe
+USERNAME = sgoh053    
+PASSWORD = ntuXinxin01!@#@
