@@ -12,19 +12,19 @@ import sys
 import pyautogui  # Import pyautogui for screen clicks
 
 
-def wait_for_midnight():
-    print("Waiting for 12:00 AM...")
-    while True:
-        current_time = datetime.now().time()  # Get the current time
-        print(current_time)
-        # If it's midnight (00:00:00), break the loop and continue
-        if current_time.hour == 0 and current_time.minute == 0:
-            print("It's 12:00 AM. Starting automation.")
-            break
-        # Wait for 10 seconds before checking again
-        time.sleep(0.1)
+# def wait_for_midnight():
+#     print("Waiting for 12:00 AM...")
+#     while True:
+#         current_time = datetime.now().time()  # Get the current time
+#         print(current_time)
+#         # If it's midnight (00:00:00), break the loop and continue
+#         if current_time.hour == 0 and current_time.minute == 1:
+#             print("It's 12:00 AM. Starting automation.")
+#             break
+#         # Wait for 10 seconds before checking again
+#         time.sleep(0.1)
 
-wait_for_midnight()
+# wait_for_midnight()
 
 target_date = datetime.now() + timedelta(days=7)
 formatted_date = target_date.strftime("%d-%b-%Y")
@@ -35,7 +35,7 @@ options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable
 # Path to your Chrome user data directory
 options.add_argument("user-data-dir=C:/Users/lauyo/AppData/Local/Google/Chrome/User Data")
 # # # Name of the profile directory you want to use
-options.add_argument("profile-directory=Default")
+options.add_argument("profile-directory=Profile 4")
 
 options.add_argument("--no-sandbox") #bypass OS security model
 options.add_argument("--disable-dev-shm-usage") #overcome limited resource problems
@@ -45,7 +45,7 @@ options.add_experimental_option('useAutomationExtension', False)
 
 key = {}
 
-TIMEOUT = 60
+TIMEOUT = 200
 
 def init():
     with open('config.txt') as f:
@@ -58,7 +58,8 @@ def clicker():
     try:
         driver = webdriver.Chrome(executable_path=key.get('DRIVE'), options=options)
         driver.get('https://ntu.facilitiesbooking.com/login.aspx')
-
+        court = key.get('Court')
+        timing = key.get('Time')
         # Log in with Microsoft using the unique id
         login_button = WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.ID, "link_azure")))
         login_button.click()
@@ -89,17 +90,19 @@ def clicker():
         date_input = WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_txt_startDate")))
 
         # Choose time slot
-        x_coord = 923  # Example X coordinate (replace with actual)
-        y_coord = 620  # Example Y coordinate (replace with actual)
+
+        base = (560,500)
+        x_coord,y_coord = (base[0] + (int(timing)-8)*40, base[1] + (int(court)-1)*40)  
 
         pyautogui.moveTo(x_coord, y_coord)  # Move the mouse to the coordinates
+        sleep(2)
         pyautogui.click()  # Click at the specified position
 
         sleep(10)
         # Input reason to play
 
-        x_coord = 780 # Example X coordinate (replace with actual)
-        y_coord = 253  # Example Y coordinate (replace with actual)
+        x_coord = 780 
+        y_coord = 253  
         pyautogui.moveTo(x_coord, y_coord)
         sleep(2)
         pyautogui.click()
@@ -128,6 +131,7 @@ def clicker():
 
 if __name__ == "__main__":
     init()
+    print(key)
     if len(sys.argv) >= 2:
         if sys.argv == "-bg":
            options.add_argument("--headless")
